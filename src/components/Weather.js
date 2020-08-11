@@ -21,6 +21,9 @@ const Weather = props => (
             <img src={props.icon} alt="Weather icon"/>
             <p>{props.city}</p>
             <p>{props.temp}&#8451;</p>
+            <form onSubmit={props.deletingWeather}>
+                <button style={{textAlign: "center"}}>Delete</button>
+            </form>
         </div>
         }
         <div style={{
@@ -29,6 +32,7 @@ const Weather = props => (
             justifyContent: "center",
             alignItems: "center"
         }}>{props.error}</div>
+
     </div>
 );
 

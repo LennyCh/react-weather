@@ -38,16 +38,27 @@ class App extends React.Component {
         }
     };
 
+    deletingWeather = event => {
+        event.preventDefault();
+        this.setState( {
+            city: null,
+            temp: null,
+            icon: null,
+            error: null
+        })
+    };
+
   render() {
     return (
         <div>
             <Info />
-            <Form weatherMethod={this.gettingWeather}/>
+            <Form gettingWeather={this.gettingWeather}/>
             <Weather
                 city={this.state.city}
                 temp={this.state.temp}
                 icon={this.state.icon}
                 error={this.state.error}
+                deletingWeather={this.deletingWeather}
             />
         </div>
     )
