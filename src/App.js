@@ -1,21 +1,20 @@
 import React from "react";
 import Info from "./components/info";
 import Form from "./components/Form";
-import Weather from "./components/Weather";
+import all from "./App.css"
 
 const apiKey = '30cb993ec42d09e401df734028fff830';
 
 class App extends React.Component {
 
     state = {
-        city: null,
-        temp: null,
-        icon: null,
-        error: null
+        dashboardState: 'Dashboard is empty',
+        city: [],
+        error: false
     };
 
     gettingWeather = async (event) => {
-        event.preventDefault();
+        try {event.preventDefault();
         const city = event.target.elements.city.value;
 
         if (city) {
@@ -26,25 +25,54 @@ class App extends React.Component {
 
             const iconUrl = "http://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
 
-            this.setState({
-                city: data.name,
+            const inputtedCity = {
+                id: data.id,
+                name: data.name,
                 temp: tempC,
-                icon: iconUrl,
+                icon: iconUrl
+            };
+
+            const newCity = [...this.state.city, inputtedCity];
+            console.log(newCity);
+
+            return this.setState({
+                dashboardState: null,
+                city: newCity,
+                error: false
             })
         } else {
             this.setState({
                 error: 'Dashboard is empty'
             })
         }
+        } catch (e) {
+            this.setState({
+                error: 'City name is incorrect'
+            })
+        }
+
     };
 
-    deletingWeather = event => {
-        event.preventDefault();
-        this.setState( {
-            city: null,
-            temp: null,
-            icon: null,
-            error: null
+    filter = id => () => {
+        const city = this.state.city;
+        const filteredCity = city.filter(element => element.id !== id);
+        this.setState({ city: filteredCity });
+    };
+
+    renderDashboard = () => {
+        const { city } = this.state;
+        return city.map(item => {
+            const { id, name, temp, icon } = item;
+            return (
+                <div className={'weather'} key={id}>
+                    <img src={icon} alt={'Weather description'}/>
+                    <p>{name}</p>
+                    <p>{temp}&#8451;</p>
+                    <form onClick={this.filter(id)} className={'weather__delete'}>
+                        Delete
+                    </form>
+                </div>
+            )
         })
     };
 
@@ -53,15 +81,15 @@ class App extends React.Component {
         <div>
             <Info />
             <Form gettingWeather={this.gettingWeather}/>
-            <Weather
-                city={this.state.city}
-                temp={this.state.temp}
-                icon={this.state.icon}
-                error={this.state.error}
-                deletingWeather={this.deletingWeather}
-            />
+            <div className={'dashboard'}>
+                {this.renderDashboard()}
+            </div>
+            <div className={'dashboard_placeholder'}>{this.state.error}</div>
+            <div className={'dashboard_placeholder'}>{this.state.dashboardState}</div>
         </div>
     )
+
+
   }
 }
 
